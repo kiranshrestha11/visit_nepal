@@ -1,34 +1,23 @@
-class Hotel {
-  String imageUrl;
+import 'package:flutter/material.dart';
+
+class Hotel with ChangeNotifier {
+  String id;
   String name;
   String address;
-  int price;
+  double price;
+  String imageUrl;
+  List<String> startTimes;
+  int rating;
+  bool isAvailable;
 
   Hotel({
-    this.imageUrl,
+    this.id,
     this.name,
     this.address,
     this.price,
+    this.imageUrl,
+    this.startTimes,
+    this.rating,
+    this.isAvailable,
   });
 }
-
-final List<Hotel> hotels = [
-  Hotel(
-    imageUrl: 'assets/images/hotel0.jpg',
-    name: 'Hotel 0',
-    address: '404 Great St',
-    price: 175,
-  ),
-  Hotel(
-    imageUrl: 'assets/images/hotel1.jpg',
-    name: 'Hotel 1',
-    address: '404 Great St',
-    price: 300,
-  ),
-  Hotel(
-    imageUrl: 'assets/images/hotel2.jpg',
-    name: 'Hotel 2',
-    address: '404 Great St',
-    price: 240,
-  ),
-];

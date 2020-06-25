@@ -1,87 +1,99 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:visit_nepal/model/places_model.dart';
+import 'package:visit_nepal/screen/booked_hotel_screen.dart';
+import 'package:visit_nepal/widgets/app_drawer.dart';
+import 'package:visit_nepal/widgets/destinations_list.dart';
 
-class MainScreen extends StatelessWidget {
+enum FilterOptions { Favourites, All }
+
+class MainScreen extends StatefulWidget {
   static const routeName = "/main_screen";
+
+  @override
+  _MainScreenState createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  bool showFavourites = false;
+  int _currentTab = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Places You Can Visit',
+          'Destinations',
           style: TextStyle(
-            color: Colors.black54,
+            color: Theme.of(context).accentColor,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
         ),
-      ),
-      body: SafeArea(
-        child: ListView(
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                Container(
-                  height: 650,
-                  child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemCount: places.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      Place place = places[index];
-                      return ClipRRect(
-                        borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(28.0),
-                            bottomLeft: Radius.circular(28.0)),
-                        child: Container(
-                          padding: null,
-                          margin: EdgeInsets.all(2.0),
-                          height: 200,
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: <Widget>[
-                              Image(
-                                image: AssetImage(place.imgUrl),
-                                fit: BoxFit.fill,
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: <Widget>[
-                                  Container(
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.place,
-                                          color: Colors.redAccent,
-                                        ),
-                                        Text(
-                                          place.city,
-                                          style: TextStyle(
-                                            color: Colors.white70,
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 24.0,
-                                          ),
-                                          softWrap: true,
-                                          overflow: TextOverflow.fade,
-                                        ),
-                                      ],
-                                    ),
-                                    color: Colors.black54,
-                                    width: 356,
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+        actions: <Widget>[
+          Row(
+            //crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              PopupMenuButton(
+                onSelected: (FilterOptions selectedOption) {
+                  setState(() {
+                    if (selectedOption == FilterOptions.Favourites) {
+                      showFavourites = true;
+                    } else {
+                      showFavourites = false;
+                    }
+                  });
+                },
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.white,
+                  size: 40,
                 ),
-              ],
-            ),
-          ],
-        ),
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    child: Text('Show Favourites'),
+                    value: FilterOptions.Favourites,
+                  ),
+                  PopupMenuItem(
+                    child: Text('Show All'),
+                    value: FilterOptions.All,
+                  ),
+                ],
+              ),
+            ],
+          )
+        ],
+      ),
+      drawer: AppDrawer(),
+      body: DestinationList(showFavourites),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentTab,
+        onTap: (int value) {
+          setState(() {
+            _currentTab = value;
+          });
+        },
+        backgroundColor: Theme.of(context).primaryColor,
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.search,
+                size: 35,
+                color: Colors.white,
+              ),
+              title: SizedBox.shrink()),
+          BottomNavigationBarItem(
+              icon: InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, BookedHotelScreen.routeName);
+                },
+                child: CircleAvatar(
+                  radius: 20.0,
+                  backgroundImage: NetworkImage(
+                      "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+                ),
+              ),
+              title: SizedBox.shrink())
+        ],
       ),
     );
   }
